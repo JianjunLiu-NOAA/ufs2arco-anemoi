@@ -20,7 +20,7 @@ Before getting started, you will need to set up a conda environment. First, if y
    
        conda install -c conda-forge mpi4py
    
-  Test the installation: pytest
+   Test the installation: pytest
 
 2. Setup the conda environment and install the anemoi
    
