@@ -6,31 +6,31 @@ Before getting started, you will need to set up a conda environment. First, if y
    
    Clone the package
    
-       git clone https://github.com/NOAA-EMC/ufs2arco.git
+         git clone https://github.com/NOAA-EMC/ufs2arco.git
    
    Create the conda environment and install the package
    
-       cd ufs2arco
+         cd ufs2arco
    
-       conda env create -f environment.yaml
+         conda env create -f environment.yaml
    
-       conda activate ufs2arco
+         conda activate ufs2arco
    
-       pip install -e . --no-deps
+         pip install -e . --no-deps
    
-       conda install -c conda-forge mpi4py
+         conda install -c conda-forge mpi4py
    
    Test the installation: pytest
 
 2. Setup the conda environment and install the anemoi
    
-      conda create -n anemoi python=3.12
+         conda create -n anemoi python=3.12
    
-      conda activate anemoi
+         conda activate anemoi
    
-      module load cuda
+         module load cuda
    
-      pip install anemoi-datasets anemoi-graphs anemoi-models anemoi-training anemoi-inference flash-attn mpi4py trimesh 'numpy<2.3' 'earthkit-data<0.14.0'
+         pip install anemoi-datasets anemoi-graphs anemoi-models anemoi-training anemoi-inference flash-attn mpi4py trimesh 'numpy<2.3' 'earthkit-data<0.14.0'
    
 
    
