@@ -30,7 +30,9 @@ Before getting started, you will need to set up a conda environment. First, if y
    
          module load cuda
    
-         pip install anemoi-datasets anemoi-graphs anemoi-models anemoi-training anemoi-inference flash-attn mpi4py trimesh 'numpy<2.3' 'earthkit-data<0.14.0'
+         pip install anemoi-datasets anemoi-graphs anemoi-models anemoi-training anemoi-inference
+   
+         pip install flash-attn mpi4py trimesh 'numpy<2.3' 'earthkit-data<0.14.0'
    
 
    
