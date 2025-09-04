@@ -1,0 +1,114 @@
+mover:
+    name: mpidatamover
+    # name: datamover
+    # batch_size: 2
+
+directories:
+    zarr: gdas_20210324_20250731_1p00_L13.zarr
+    cache: logs/1p00/cache
+    logs: logs/1p00/ufs2arco_L13
+
+multisource:
+    - source:
+        name: gdas_archive
+
+        t0:
+          start: 2021-03-23T00
+          end: 2021-03-31T18
+          freq: 6h
+
+        fhr:
+          start: 0
+          end: 0
+          step: 1
+
+        resolution: 1p00
+       
+        variables:
+          # 2D Atmospheric Variables
+          - d2m
+          - sh2
+          - sp
+          - t2m
+          - u10
+          - v10
+          - msl
+          - t_surface
+          - u100
+          - v100          
+          # 3D Atmospheric Variables
+          - t
+          - q
+          - u
+          - v
+          - gh
+          - w
+          # Static Variables
+          - lsm
+          - orog
+          - slt
+
+        levels:
+          - 50
+          - 100
+          - 150
+          - 200
+          - 250
+          - 300
+          - 400
+          - 500
+          - 600
+          - 700
+          - 850
+          - 925
+          - 1000  
+
+    - source:
+        name: gdas_archive
+
+        t0:
+          start: 2021-03-22T18
+          end: 2021-03-31T12
+          freq: 6h
+
+        fhr:
+          start: 6
+          end: 6
+          step: 1
+
+        resolution: 1p00
+       
+        variables:
+          # 2D Atmospheric Variables
+          - accum_tp
+          - accum_acpcp
+      
+target:
+  name: anemoi
+  
+  sort_channels_by_levels: True
+  
+  rename:
+    t_surface: st
+    accum_tp: tp
+    accum_acpcp: cp
+    
+  forcings:
+    - cos_latitude
+    - sin_latitude
+    - cos_longitude
+    - sin_longitude
+    - cos_julian_day
+    - sin_julian_day
+    - cos_local_time
+    - sin_local_time
+    - insolation
+    
+  chunks:
+    time: 1
+    variable: -1
+    ensemble: 1
+    cell: -1
+
+attrs:
+  description: "Data from NOAA GDAS"

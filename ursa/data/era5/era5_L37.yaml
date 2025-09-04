@@ -1,0 +1,128 @@
+mover:
+  name: mpidatamover
+
+directories:
+  zarr: era5_2020_2022_1p00_L13.zarr
+  cache: logs/cache
+  logs: logs/ufs2arco_L37
+
+source:
+  name: gcs_era5_1degree
+  uri: gs://gcp-public-data-arco-era5/ar/1959-2022-1h-360x181_equiangular_with_poles_conservative.zarr
+  time:
+    start: 2020-01-01T00
+    end: 2022-12-31T18
+    freq: 6h
+
+  variables:
+    # 2D Atmospheric Variables
+    - surface_pressure
+    - 2m_temperature
+    - 10m_u_component_of_wind
+    - 10m_v_component_of_wind
+    - mean_sea_level_pressure
+    - total_cloud_cover
+    - total_column_water_vapour
+    - total_precipitation
+    # 3D Atmospheric Variables
+    - geopotential
+    - specific_humidity
+    - temperature
+    - u_component_of_wind
+    - v_component_of_wind
+    - vertical_velocity
+    # Static Variables
+    - land_sea_mask
+    - geopotential_at_surface
+    - slope_of_sub_gridscale_orography
+    - standard_deviation_of_filtered_subgrid_orography
+    - soil_type
+
+  levels:
+    - 1 
+    - 2
+    - 3
+    - 5
+    - 7
+    - 10
+    - 20
+    - 30
+    - 50
+    - 70
+    - 100
+    - 125
+    - 150
+    - 175
+    - 200
+    - 225
+    - 250
+    - 300
+    - 350
+    - 400
+    - 450
+    - 500
+    - 550
+    - 600
+    - 650
+    - 700
+    - 750
+    - 775
+    - 800
+    - 825
+    - 850
+    - 875
+    - 900
+    - 925
+    - 950
+    - 975
+    - 1000
+
+transforms:
+  divide:
+    geopotential_at_surface: 9.80665
+
+target:
+  name: anemoi
+  
+  sort_channels_by_levels: True
+  
+  rename:
+    surface_pressure: sp
+    2m_temperature: t2m
+    10m_u_component_of_wind: u10
+    10m_v_component_of_wind: v10
+    mean_sea_level_pressure: msl
+    total_cloud_cover: tcc
+    total_column_water_vapour: tcw
+    total_precipitation: tp
+    geopotential: gh
+    specific_humidity: q
+    temperature: t
+    u_component_of_wind: u
+    v_component_of_wind: v
+    vertical_velocity: w
+    land_sea_mask: lsm
+    geopotential_at_surface: orog
+    slope_of_sub_gridscale_orography: slor 
+    standard_deviation_of_filtered_subgrid_orography: sdor
+    soil_type: slt
+    
+  forcings:
+    - cos_latitude
+    - sin_latitude
+    - cos_longitude
+    - sin_longitude
+    - cos_julian_day
+    - sin_julian_day
+    - cos_local_time
+    - sin_local_time
+    - insolation
+
+  chunks:
+    time: 1
+    variable: -1
+    ensemble: 1
+    cell: -1
+
+attrs:
+  description: "the era5 1 degree data"

@@ -1,0 +1,134 @@
+mover:
+    name: mpidatamover
+
+directories:
+    zarr: gfs_20210323_20250731_1p00_L37.zarr
+    cache: logs/1p00/cache
+    logs: logs/1p00/ufs2arco_L37
+
+multisource:
+    - source:
+        name: gfs_archive
+
+        t0:
+          start: 2021-03-23T00
+          end: 2025-07-31T18
+          freq: 6h
+
+        fhr:
+          start: 0
+          end: 0
+          step: 1
+
+        resolution: 1p00
+       
+        variables:
+          # 2D Atmospheric Variables
+          - d2m
+          - sh2
+          - sp
+          - t2m
+          - u10
+          - v10
+          - t_surface
+          - u100
+          - v100          
+          # 3D Atmospheric Variables
+          - t
+          - q
+          - u
+          - v
+          - gh
+          - w
+          # Static Variables
+          - lsm
+          - orog
+
+        levels:
+          - 1 
+          - 2
+          - 3
+          - 5
+          - 7
+          - 10
+          - 20
+          - 30
+          - 50
+          - 70
+          - 100
+          - 125
+          - 150
+          - 175
+          - 200
+          - 225
+          - 250
+          - 300
+          - 350
+          - 400
+          - 450
+          - 500
+          - 550
+          - 600
+          - 650
+          - 700
+          - 750
+          - 775
+          - 800
+          - 825
+          - 850
+          - 875
+          - 900
+          - 925
+          - 950
+          - 975
+          - 1000
+
+    - source:
+        name: gfs_archive
+
+        t0:
+          start: 2021-03-22T18
+          end: 2025-07-31T12
+          freq: 6h
+
+        fhr:
+          start: 6
+          end: 6
+          step: 1
+
+        resolution: 1p00
+       
+        variables:
+          # 2D Atmospheric Variables
+          - accum_tp
+          - accum_acpcp
+       
+target:
+  name: anemoi
+  
+  sort_channels_by_levels: True
+  
+  rename:
+    t_surface: st
+    accum_tp: tp
+    accum_acpcp: cp
+    
+  forcings:
+    - cos_latitude
+    - sin_latitude
+    - cos_longitude
+    - sin_longitude
+    - cos_julian_day
+    - sin_julian_day
+    - cos_local_time
+    - sin_local_time
+    - insolation
+    
+  chunks:
+    time: 1
+    variable: -1
+    ensemble: 1
+    cell: -1
+
+attrs:
+  description: "Data from NOAA GFS"

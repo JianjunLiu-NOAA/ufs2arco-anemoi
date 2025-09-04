@@ -1,0 +1,103 @@
+mover:
+  name: mpidatamover
+
+directories:
+  zarr: replay_2020_2022_0p25_L13.zarr
+  cache: logs/cache
+  logs: logs/ufs2arco_L13
+
+source:
+  name: gcs_replay_atmosphere
+  uri: gs://noaa-ufs-gefsv13replay/ufs-hr1/0.25-degree-subsampled/03h-freq/zarr/fv3.zarr
+  time:
+    start: 2020-01-01T00
+    end: 2022-12-31T18
+    freq: 6h
+
+  variables:
+    # 3D Atmospheric Variables
+    - ugrd
+    - vgrd
+    - dzdt
+    - tmp
+    - spfh
+    # 2D Atmospheric Variables
+    - pressfc
+    - ugrd10m
+    - vgrd10m
+    - tmp2m
+    - spfh2m
+    - tmpsfc
+    - soilt1
+    - soilt2
+    - soilw1
+    - soilw2
+    - pwat
+    - dlwrf
+    - dswrf
+    # Static Variables
+    - land_static
+    - hgtsfc_static
+    - orog
+    # Layer thickness is only included for Finite Volume vertical Regridding
+    - delz
+
+transforms:
+  fv_vertical_regrid:
+    weight_var: delz
+    interfaces:
+      - 50
+      - 100
+      - 150
+      - 200
+      - 250
+      - 300
+      - 400
+      - 500
+      - 600
+      - 700
+      - 850
+      - 925
+      - 1000  
+    use_nearest_interfaces: True
+    keep_weight_var: False # drop the layer thickness variable after vertical regridding
+
+target:
+  name: anemoi
+  
+  sort_channels_by_levels: True
+  
+  rename:
+    ugrd: u
+    vgrd: v
+    dzdt: gh
+    tmp: t
+    spfh: q
+    pressfc: sp
+    ugrd10m: u10
+    vgrd10m: v10
+    tmp2m: t2m
+    spfh2m: sh2
+    tmpsfc: st
+    land_static: lsm
+    hgtsfc_static: hgtsfc
+    
+  forcings:
+    - sin_latitude
+    - cos_longitude
+    - sin_longitude
+    - cos_latitude
+    - cos_julian_day
+    - sin_julian_day
+    - cos_local_time
+    - sin_local_time
+    - insolation
+    
+  chunks:
+    time: 1
+    variable: -1
+    ensemble: 1
+    cell: -1
+
+attrs:
+  description: "Data from https://psl.noaa.gov/data/ufs_replay/"
