@@ -1,0 +1,95 @@
+defaults:
+- data: zarr_aifs_era5
+- dataloader: native_grid
+- datamodule: ens
+- diagnostics: evaluation
+- hardware: slurm
+- graph: encoder_decoder_only
+- model: transformer_ens
+- training: ensemble
+- _self_
+
+config_validation: True
+
+dataloader:
+  batch_size:
+    training: 1
+    validation: 1
+    test: 1    
+  training:
+    start: 1979
+    end: 2017
+    drop: [] 
+  validation:
+    start: 2018
+    end: 2021
+  test:
+    start: 2022
+    end: 2023
+
+diagnostics:
+  plot:
+    callbacks: []
+    
+hardware:
+  paths:
+    output: ./training-output/
+    data: /scratch3/NAGAPE/gpu-ai4wp/Jianjun.Liu/data/era5
+    graph: /scratch3/NAGAPE/gpu-ai4wp/Jianjun.Liu/data/era5
+  files:
+    dataset: era5-o96-1979-2023-6h-v8.zarr  
+  num_gpus_per_model: 1
+  num_gpus_per_ensemble: 1
+
+graph:
+  attributes:
+    nodes:
+      area_weight:
+        _target_: anemoi.graphs.nodes.attributes.SphericalAreaWeights
+        norm: unit-max
+        fill_value: 0
+
+model:
+  num_channels: 1024
+  bounding:
+    - _target_: anemoi.models.layers.bounding.ReluBounding #[0, infinity)
+      variables:
+      - tp
+      - q_50
+      - q_100
+      - q_150
+      - q_200
+      - q_250
+      - q_300
+      - q_400
+      - q_500
+      - q_600
+      - q_700
+      - q_850
+      - q_925
+      - q_1000  
+  
+training:
+  fork_run_id: 
+  load_weights_only: True
+  
+  ensemble_size_per_device: 10
+  max_epochs: null
+  max_steps: 60000
+
+  training_loss:
+    alpha: 0.95  
+  validation_metrics:
+    fkcrps:
+      alpha: 0.95
+  
+  rollout:
+    start: 1
+    epoch_increment: 1
+    max: 2
+    
+  lr:
+    warmup: 100
+    rate: 1.0e-5
+    iterations: ${training.max_steps} # NOTE: When max_epochs < max_steps, scheduler will run for max_steps
+    min: 0.0
