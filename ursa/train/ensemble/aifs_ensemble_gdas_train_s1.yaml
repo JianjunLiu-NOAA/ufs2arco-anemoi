@@ -1,0 +1,95 @@
+defaults:
+- data: zarr_gdas
+- dataloader: native_grid
+- datamodule: ens
+- diagnostics: evaluation
+- hardware: slurm
+- graph: encoder_decoder_only
+- model: transformer_ens
+- training: ensemble
+- _self_
+
+config_validation: True
+
+dataloader:
+  batch_size:
+    training: 1
+    validation: 1
+    test: 1    
+  training:
+    start: 2021-03-23
+    end: 2024-07-31
+    drop: ['accum_acpcp', 'accum_tp']
+  validation:
+    start: 2024-08-01
+    end: 2025-07-31
+    drop: ['accum_acpcp', 'accum_tp']
+  test:
+    start: 2024-08-01
+    end: 2025-07-31
+    drop: ['accum_acpcp', 'accum_tp']
+  limit_batches:
+    training: null
+    validation: null
+ 
+diagnostics:
+  plot:
+    callbacks: []
+    
+hardware:
+  paths:
+    output: ./training-output/
+    data: /scratch3/NAGAPE/gpu-ai4wp/Jianjun.Liu/data/gdas
+    graph: /scratch3/NAGAPE/gpu-ai4wp/Jianjun.Liu/data/gdas
+  files:
+    dataset: gdas_20210323_20250731_1p00_L13.zarr
+  num_gpus_per_model: 1
+  num_gpus_per_ensemble: 1
+
+graph:
+  attributes:
+    nodes:
+      area_weight:
+        _target_: anemoi.graphs.nodes.attributes.IsolatitudeAreaWeights
+    
+model:
+  num_channels: 1024
+  bounding:
+    - _target_: anemoi.models.layers.bounding.ReluBounding #[0, infinity)
+      variables:
+      - sh2
+      - q_50
+      - q_100
+      - q_150
+      - q_200
+      - q_250
+      - q_300
+      - q_400
+      - q_500
+      - q_600
+      - q_700
+      - q_850
+      - q_925
+      - q_1000  
+  
+training:
+  ensemble_size_per_device: 10
+  max_epochs: null
+  max_steps: 1000 #300000
+
+  training_loss:
+    alpha: 0.95  
+  validation_metrics:
+    fkcrps:
+      alpha: 0.95
+  
+  rollout:
+    start: 1
+    epoch_increment: 0
+    max: 1
+    
+  lr:
+    warmup: 1000 
+    rate: 1.0e-3
+    iterations: ${training.max_steps} 
+    min: 0.0
