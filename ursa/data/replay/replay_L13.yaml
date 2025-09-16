@@ -14,7 +14,7 @@ source:
     end: 2022-12-31T18
     freq: 6h
 
-  variables:
+variables:
     # 3D Atmospheric Variables
     - ugrd
     - vgrd
