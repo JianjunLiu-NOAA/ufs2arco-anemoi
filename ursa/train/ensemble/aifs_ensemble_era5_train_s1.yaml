@@ -71,7 +71,7 @@ model:
   
 training:
   ensemble_size_per_device: 10
-  max_epochs: 100
+  max_epochs: null
   max_steps: 300000
 
   training_loss:
@@ -87,6 +87,6 @@ training:
     
   lr:
     warmup: 1000 
-    rate: 1.0e-3
+    rate: 2.5e-4  #1.0e-3
     iterations: ${training.max_steps} # NOTE: When max_epochs < max_steps, scheduler will run for max_steps
     min: 0.0
